@@ -2,208 +2,63 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>주식 투자런 - 시즌 2</title>
+    <title>투자 랜덤런 - 시즌 2</title>
     <style>
-        /* 가람님의 블랙 테마 감성 완벽 구현 */
-        body {
-            background-color: #121212;
-            color: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-        .game-wrapper {
-            width: 100%;
-            max-width: 900px;
-        }
-        /* 상단 상태 바 */
-        .top-bar {
-            background-color: #1e1e1e;
-            padding: 15px 25px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-        }
-        .top-bar .score {
-            color: #f1c40f;
-            font-size: 1.2rem;
-        }
-        /* 4분할 그리드 레이아웃 */
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        @media (max-width: 600px) {
-            .grid-container { grid-template-columns: 1fr; }
-        }
-        /* 기업 카드 스타일 */
-        .card {
-            background-color: #1e1e1e;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-        .card .image-placeholder {
-            width: 100%;
-            height: 160px;
-            background-color: #000000;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-        .card .image-placeholder span {
-            color: #555;
-            font-size: 0.9rem;
-        }
-        .card .company-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .card .status-text {
-            color: #aaa;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-        }
-        /* 금액 입력칸 디자인 */
-        .card .input-btn {
-            width: 100%;
-            background-color: #151515;
-            border: 1px solid #333;
-            color: #fff;
-            padding: 10px;
-            border-radius: 6px;
-            text-align: center;
-            font-size: 1rem;
-            font-weight: bold;
-            outline: none;
-            box-sizing: border-box;
-        }
-        .card .input-btn:focus {
-            border-color: #f1c40f;
-        }
-        /* 하단 정보 섹션 */
-        .info-section {
-            background-color: #1e1e1e;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .info-section h3 {
-            margin-top: 0;
-            font-size: 1rem;
-            color: #f1c40f;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .info-btn {
-            display: inline-block;
-            background-color: #e67e22;
-            color: white;
-            text-decoration: none;
-            padding: 10px 18px;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-        .info-btn:hover { background-color: #d35400; }
-        /* 하단 결과보기 대형 버튼 */
-        .submit-btn {
-            width: 100%;
-            background-color: #f1c40f;
-            color: #000;
-            border: none;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .submit-btn:hover { background-color: #f39c12; }
-        
-        /* 로그 메시지 디자인 추가 */
-        .log-section {
-            background-color: #111;
-            border: 1px solid #222;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            font-family: monospace;
-            font-size: 0.9rem;
-            color: #bbb;
-            max-height: 150px;
-            overflow-y: auto;
-        }
+        body { background: #121212; color: white; font-family: 'Malgun Gothic', sans-serif; padding: 20px; margin: 0; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: #222; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #444; }
+        #seed-input { background: transparent; border: none; border-bottom: 2px solid #f1c40f; color: #f1c40f; font-size: 1.5rem; width: 180px; text-align: right; outline: none; }
+        .investment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .card { background: #2a2a2a; border-radius: 15px; padding: 15px; border: 1px solid #333; text-align: center; }
+        .brand-img { width: 100%; height: 200px; object-fit: contain; background: #000; border-radius: 10px; border: 1px solid #444; }
+        .result-desc { color: #aaa; font-size: 0.95rem; margin: 15px 0; min-height: 45px; line-height: 1.4; }
+        .percent-tag { color: #2ecc71; font-weight: bold; font-size: 1.2rem; margin-bottom: 10px; }
+        .input-box { width: 80%; padding: 10px; background: #1a1a1a; border: 1px solid #444; color: white; border-radius: 5px; text-align: center; }
+        .info-section { margin-top: 30px; padding: 20px; background: #1e1e1e; border-radius: 15px; }
+        .info-btn { display: none; background: #d35400; color: white; border: none; padding: 10px 15px; margin: 5px; border-radius: 5px; cursor: pointer; }
+        .action-btn { width: 100%; height: 60px; font-size: 1.3rem; font-weight: bold; margin-top: 20px; border-radius: 10px; cursor: pointer; border: none; background: #f1c40f; color: black; }
     </style>
 </head>
 <body>
 
-<div class="game-wrapper">
-    <!-- 상단 바 -->
-    <div class="top-bar">
-        <div id="round-text">회차: 1 / 7</div>
-        <div>보유 점수: <span id="total-asset" class="score">100,000,000</span> ₩</div>
+<div class="container">
+    <div class="header">
+        <h2>회차: <span id="turn-text">1</span> / 7</h2>
+        <div>보유 점수: <input type="number" id="seed-input" value="1000000"> ₩</div>
     </div>
 
-    <!-- 4분할 기업 카드 리스트 -->
-    <div class="grid-container" id="card-container"></div>
+    <div id="grid" class="investment-grid"></div>
 
-    <!-- 이번 회차 획득 정보 -->
     <div class="info-section">
         <h3>📂 이번 회차 획득 정보 (클릭 시 확인)</h3>
-        <a id="info-file-btn" href="#" target="_blank" class="info-btn">📙 정보 1</a>
+        <div id="info-btns"></div>
     </div>
 
-    <!-- 결과 보기 버튼 -->
-    <button id="next-btn" class="submit-btn" onclick="processRound()">1회차 결과 보기</button>
-
-    <!-- 하단 실시간 로그 보드 -->
-    <div class="log-section" id="log-container">
-        정산 로그가 여기에 표시됩니다. 금액을 입력하고 다음 회차로 진행하세요.
-    </div>
+    <button id="main-btn" class="action-btn" onclick="handleAction()">1회차 결과 보기</button>
 </div>
 
 <script>
-    let currentRound = 1;
-    let totalAsset = 100000000; // 초기 자산 1억 원 설정 가능
-    let logs = [];
+    let turn = 1;
+    let mode = "INPUT"; 
+    let seed = 1000000;
 
-    // 가람님이 지정하신 기업 순서 세팅
+    // ★ 가람님 마스터 스펙: 기업 ID 및 베이스 배치 완벽 동기화
     const companies = [
-        { id: 'c4', name: '디노다스', base: 0, investAmount: 0 },
-        { id: 'c3', name: '스페이스엠엘', base: 7, investAmount: 0 },
-        { id: 'c2', name: '감샐푸드', base: 14, investAmount: 0 },
-        { id: 'c1', name: '요정바이오', base: 21, investAmount: 0 }
+        { id: 'c4', name: '디노다스', base: 0 },
+        { id: 'c3', name: '스페이스엠엘', base: 7 },
+        { id: 'c2', name: '감샐푸드', base: 14 },
+        { id: 'c1', name: '요정바이오', base: 21 }
     ];
 
-    // 가람님이 지정하신 실제 PDF 힌트 파일 이름 목록 완벽 매핑
+    // ★ 가람님이 지정하신 실제 PDF 파일명 연동 (띄어쓰기 및 특수문자 반영 인코딩)
     const pdfFiles = [
-        "디노다스 기사.pdf",
-        "주주게시판.pdf",
-        "!스페이스엠엘!.pdf",
-        "인스타.pdf",
-        "긴급 안내.pdf",
-        "블라인드.pdf",
-        "리포트 일부 .pdf"
+        "디노다스 기사.pdf", "주주게시판.pdf", "!스페이스엠엘!.pdf",
+        "인스타.pdf", "긴급 안내.pdf", "블라인드.pdf", "리포트 일부 .pdf"
     ];
 
-    // 등락률 수치 밸런스 데이터베이스 (스와프 반영)
+    // ★ 2회차 확정 뉴스 데이터 및 수익률 수치 완벽 반영
     const rData = {
+        // 디노다스 (r1~r7)
         1: { desc: "디노다스 신상 컬렉션 출시 첫날 오픈런…매장 앞 수천 명 몰려", per: 10 },
         2: { desc: "아이돌 '커피맛 쿠키' 착용 효과…디노다스, 글로벌 품절 대란", per: 15 },
         3: { desc: "디노다스 '스노우브로' 티셔츠 표절 의혹…원작 브랜드와 법적 공방 예고", per: -10 },
@@ -212,14 +67,16 @@
         6: { desc: "패션업계 비수기 직격탄…디노다스, 재고 부담에 할인 판매 확대", per: -5 },
         7: { desc: "'신상 너무 많다'…디노다스 과도한 신제품 전략에 소비자 피로감 커져", per: -10 },
 
+        // 스페이스엠엘 (r8~r14)
         8: { desc: "스페이스엠엘, 국방부 차세대 발사체 성능평가 탈락…군 사업 수주 '빨간불'", per: -7 },
         9: { desc: "스페이스엠엘, 중동 대형 우주·방산 계약 체결…10조 원 규모 수출 성사", per: 18 },
         10: { desc: "스페이스엠엘 핵심 기술 해외 유출 의혹…수사기관 조사 착수", per: -11 },
         11: { desc: "스페이스엠엘, 민간 우주선 발사 성공…국내 우주산업 새 이정표", per: 14 },
-        12: { desc: "스페이스엠엘, 글로벌 우주정거장 프로젝트 합류…국제 우주개발 핵심 파트너로", per: 10 }, // 5회차 스와프
-        13: { desc: "스페이스엠엘, 방산 비리 의혹에 세무조사까지…경영 리스크 확대", per: -15 },               // 6회차 스와프
+        12: { desc: "스페이스엠엘, 글로벌 우주정거장 프로젝트 합류…국제 우주개발 핵심 파트너로", per: 10 }, // 5회차 스와프용
+        13: { desc: "스페이스엠엘, 방산 비리 의혹에 세무조사까지…경영 리스크 확대", per: -15 },               // 6회차 스와프용
         14: { desc: "스페이스엠엘, 세계 최초 유인 화성 착륙 성공…우주 탐사 역사 새로 썼다", per: 15 },
 
+        // 감샐푸드 (r15~r21)
         15: { desc: "감샐푸드, 글로벌 품절 사태에 생산라인 풀가동…공장 증설 투자 결정", per: 8 },
         16: { desc: "'감샐빵 챌린지' 숏폼 열풍…감샐푸드, 역대급 매출 신기록", per: 16 },
         17: { desc: "기후변화 직격탄…감샐푸드, 원자재 수급난에 생산 차질 우려", per: -8 },
@@ -228,6 +85,7 @@
         20: { desc: "감샐푸드, 미국 식품 규제 당국 조사서 혐의 벗어…대규모 손해배상 소송도 승소", per: 12 },
         21: { desc: "감샐푸드 해외 생산기지 대규모 파업…납기 지연에 공급망 비상", per: -20 },
 
+        // 요정바이오 (r22~r28)
         22: { desc: "요정바이오, 임상 1상 데이터 유출 의혹 제기…보안 관리 도마 위", per: -8 },
         23: { desc: "'식약처 압수수색' 찌라시 확산…요정바이오 \"사실무근\" 해명", per: -12 },
         24: { desc: "요정바이오, 조사 결과 무혐의…신약 후보물질 임상 1상도 승인 획득", per: 12 },
@@ -237,120 +95,90 @@
         28: { desc: "요정바이오, 임상 3상 성공·전 세계 시판 허가 획득…차세대 블록버스터 신약 탄생", per: 18 }
     };
 
-    function updateUI() {
-        document.getElementById('round-text').innerText = `회차: ${currentRound} / 7`;
-        document.getElementById('total-asset').innerText = Math.floor(totalAsset).toLocaleString();
-
-        if (currentRound <= 7) {
-            // 주황색 정보 단추 링크 및 텍스트 갱신
-            const infoBtn = document.getElementById('info-file-btn');
-            infoBtn.style.display = "inline-block";
-            infoBtn.innerText = `📙 정보 ${currentRound}`;
-            infoBtn.href = encodeURIComponent(pdfFiles[currentRound - 1]);
-
-            // 노란색 하단 메인 버튼 문구 변경
-            document.getElementById('next-btn').innerText = `${currentRound}회차 결과 보기`;
-
-            // 4개 기업 카드 렌더링
-            const container = document.getElementById('card-container');
-            container.innerHTML = '';
-            
-            companies.forEach(c => {
-                c.investAmount = 0; // 라운드 시작 시 투자금 초기화
-                const div = document.createElement('div');
-                div.className = 'card';
-                div.innerHTML = `
-                    <div class="image-placeholder">
-                        <span>[ ${c.name} 로고 이미지 ]</span>
-                    </div>
-                    <div class="company-name">${c.name}</div>
-                    <div class="status-text">투자 금액을 입력하세요.</div>
-                    <input type="number" id="input-${c.id}" class="input-btn" placeholder="금액 입력" min="0" oninput="validateInvest('${c.id}')">
-                `;
-                container.appendChild(div);
-            });
-        } else {
-            // 엔딩 스크린
-            document.getElementById('round-text').innerText = `🏁 게임 종료`;
-            document.getElementById('info-file-btn').style.display = "none";
-            document.getElementById('card-container').innerHTML = '';
-            document.getElementById('next-btn').innerText = "게임 다시 시작하기";
-            
-            const logBox = document.getElementById('log-container');
-            logBox.innerHTML = `<h2>🎉 최종 정산 완료! 최종 자산: ${Math.floor(totalAsset).toLocaleString()} ₩</h2>` + logBox.innerHTML;
-        }
-    }
-
-    // 보유 자산을 넘겨서 무한 베팅하는 버그 차단
-    function validateInvest(targetId) {
-        let totalInvested = 0;
+    function init() {
+        const grid = document.getElementById('grid');
+        const infoContainer = document.getElementById('info-btns');
         
         companies.forEach(c => {
-            let el = document.getElementById(`input-${c.id}`);
-            let val = parseInt(el.value) || 0;
-            if (val < 0) { val = 0; el.value = 0; }
-            totalInvested += val;
+            grid.innerHTML += `
+                <div class="card">
+                    <img id="img-${c.id}" src="${c.id}.png" class="brand-img">
+                    <h3>${c.name}</h3>
+                    <div id="desc-${c.id}" class="result-desc">투자 금액을 입력하세요.</div>
+                    <div id="per-${c.id}" class="percent-tag"></div>
+                    <input type="number" id="inv-${c.id}" class="input-box" placeholder="금액 입력">
+                </div>`;
         });
 
-        // 보유 점수 초과 시 보정 처리
-        if (totalInvested > totalAsset) {
-            let targetEl = document.getElementById(`input-${targetId}`);
-            let currentTargetVal = parseInt(targetEl.value) || 0;
-            let allowed = totalAsset - (totalInvested - currentTargetVal);
-            targetEl.value = allowed > 0 ? allowed : 0;
-        }
+        pdfFiles.forEach((file, idx) => {
+            // 파일명 공백 및 특수문자 깨짐 방지를 위해 encodeURIComponent 처리 적용
+            infoContainer.innerHTML += `<button class="info-btn" id="info-${idx+1}" onclick="window.open('${encodeURIComponent(file)}', '_blank')">📄 정보 ${idx+1}</button>`;
+        });
+
+        updateInfoDisplay();
     }
 
-    // 결과 보기 버튼을 눌렀을 때의 정산식 개편
-    function processRound() {
-        if (currentRound > 7) {
-            // 처음부터 다시 시작
-            currentRound = 1;
-            totalAsset = 100000000;
-            logs = [];
-            document.getElementById('log-container').innerHTML = "게임을 재시작합니다.";
-            updateUI();
-            return;
-        }
+    function updateInfoDisplay() {
+        const currentBtn = document.getElementById(`info-${turn}`);
+        if(currentBtn) currentBtn.style.display = "inline-block";
+    }
 
-        let totalInvested = 0;
-        companies.forEach(c => {
-            let el = document.getElementById(`input-${c.id}`);
-            c.investAmount = parseInt(el.value) || 0;
-            totalInvested += c.investAmount;
-        });
+    function handleAction() {
+        if (mode === "INPUT") showResult();
+        else prepareNext();
+    }
 
-        let nextTotalAsset = totalAsset - totalInvested; // 남은 예수금 보관
-        let roundLogs = [`<b style="color:#f1c40f;">=== [제 ${currentRound}회차 투자 리포트] ===</b>`];
+    function showResult() {
+        seed = parseInt(document.getElementById('seed-input').value) || 0;
+        let totalGain = 0;
 
         companies.forEach(c => {
-            let dataKey = c.base + currentRound;
-            let item = rData[dataKey];
+            let rNum = c.base + turn;
 
-            if (c.investAmount > 0) {
-                let prev = c.investAmount;
-                let after = c.investAmount * (1 + item.per / 100);
-                let profit = after - prev;
-                nextTotalAsset += after;
-
-                let color = item.per > 0 ? '#ff4d4d' : '#2ecc71';
-                roundLogs.push(`[${c.name}] ${item.desc} (<span style="color:${color}">${item.per > 0 ? '+' : ''}${item.per}%</span>) ➡️ 손익: ${Math.floor(profit).toLocaleString()} ₩`);
-            } else {
-                roundLogs.push(`[${c.name}] ${item.desc} (${item.per > 0 ? '+' : ''}${item.per}%) ➡️ <span style="color:#777;">(미투자)</span>`);
+            // ★ 가람님 하이라이트 스펙: 스페이스엠엘(c3) 5회차(r12), 6회차(r13) 스와프 완벽 로직 구현
+            if (c.id === 'c3') {
+                if (turn === 5) rNum = 12;      
+                else if (turn === 6) rNum = 13; 
             }
+
+            const invest = parseInt(document.getElementById(`inv-${c.id}`).value) || 0;
+            const data = rData[rNum];
+
+            // 매 라운드 결과 발표 시 결과용 뉴스 이미지(r1~r28)로 동적 매핑
+            document.getElementById(`img-${c.id}`).src = `r${rNum}.png`;
+            document.getElementById(`desc-${c.id}`).innerText = data.desc;
+            document.getElementById(`per-${c.id}`).innerText = (data.per >= 0 ? "+" : "") + data.per + "%";
+            
+            seed -= invest;
+            totalGain += invest * (1 + data.per / 100);
         });
 
-        totalAsset = nextTotalAsset; // 자산 갱신
-        logs.unshift(roundLogs.join('<br>'));
-        document.getElementById('log-container').innerHTML = logs.join('<br><br>');
-
-        currentRound++;
-        updateUI();
+        seed = Math.floor(seed + totalGain);
+        document.getElementById('seed-input').value = seed;
+        
+        const mainBtn = document.getElementById('main-btn');
+        mainBtn.innerText = (turn < 7) ? (turn + 1) + "회차 준비하기" : "투자 종료 (최종 점수 확인)";
+        mode = "RESULT";
     }
 
-    // 초기 스타트
-    updateUI();
-</script>
+    function prepareNext() {
+        if (turn >= 7) return;
+        turn++;
+        document.getElementById('turn-text').innerText = turn;
+        updateInfoDisplay();
 
+        companies.forEach(c => {
+            document.getElementById(`img-${c.id}`).src = `${c.id}.png`;
+            document.getElementById(`desc-${c.id}`).innerText = "투자 금액을 입력하세요.";
+            document.getElementById(`per-${c.id}`).innerText = "";
+            document.getElementById(`inv-${c.id}`).value = "";
+        });
+
+        document.getElementById('main-btn').innerText = turn + "회차 결과 보기";
+        mode = "INPUT";
+    }
+
+    window.onload = init;
+</script>
 </body>
 </html>
