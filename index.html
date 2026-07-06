@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>모바일 주식 투자런 - 시즌 2</title>
+    <style>
+        /* 기본 모바일 UI 스타일링 */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f5f6f8; margin: 0; padding: 16px; color: #333; }
+        .container { max-width: 480px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        h1 { text-align: center; font-size: 1.4rem; color: #111; margin-bottom: 20px; }
+        .status-board { background: #edf2f7; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 0.95rem; }
+        .status-board div { margin: 4px 0; display: flex; justify-content: space-between; }
+        .btn { display: block; width: 100%; padding: 12px; background: #3182ce; color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; margin-bottom: 10px; box-sizing: border-box; }
+        .btn:hover { background: #2b6cb0; }
+        .btn-info { background: #28a745; }
+        .btn-info:hover { background: #218838; }
+        .company-list { margin-top: 15px; }
+        .company-item { background: #fff; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+        .company-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .company-name { font-weight: bold; font-size: 1.05rem; }
+        .input-group { display: flex; align-items: center; gap: 8px; }
+        .input-group input { width: 80px; padding: 6px; border: 1px solid #cbd5e0; border-radius: 4px; text-align: right; }
+        .input-group span { font-size: 0.9rem; color: #718096; }
+        .log-box { background: #1a202c; color: #a0aec0; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 0.85rem; max-height: 150px; overflow-y: auto; margin-top: 15px; }
+        .log-box span { color: #fff; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 id="round-title">📈 주식 투자런 - 1회차</h1>
+    
+    <div class="status-board">
+        <div><span>현재 보유 자산:</span> <strong id="total-asset">1,000,000</strong> ₩</div>
+        <div><span>투자 중인 금액:</span> <span id="invested-asset">0</span> ₩</div>
+        <div><span>가용 예수금:</span> <span id="cash-asset">1,000,000</span> ₩</div>
+    </div>
+
+    <!-- 정보 확인 버튼 -->
+    <a id="info-btn" href="#" target="_blank" class="btn btn-info">📄 정보 확인하기</a>
+    
+    <!-- 결과 보기 / 다음 회차 진행 버튼 -->
+    <button id="next-btn" class="btn" onclick="processRound()">투자 결과 보기</button>
+
+    <div class="company-list" id="company-container">
+        <!-- 자바스크립트로 기업 리스트 동적 렌더링 -->
+    </div>
+
+    <h3>📜 실시간 시장 속보 로그</h3>
+    <div class="log-box" id="log-container">
+        게임이 시작되었습니다. 정보를 확인하고 투자 비율을 정하세요.
+    </div>
+</div>
+
+<script>
+    // ■ 기본 상태 관리
+    let currentRound = 1;
+    let cash = 1000000; // 초기 시드머니 100만 ₩
+    let logs = [];
+
+    // ■ 기업 정보 상단 세팅
+    const companies = [
+        { id: 'c4', name: '디노다스', base: 0, invested: 0 },
+        { id: 'c3', name: '스페이스엠엘', base: 7, invested: 0 },
+        { id: 'c2', name: '감샐푸드', base: 14, invested: 0 },
+        { id: 'c1', name: '요정바이오', base: 21, invested: 0 }
+    ];
+
+    // ■ 가람님이 지정하신 실제 PDF 파일명 목록 완벽 매핑 (1회차~7회차 순)
+    const pdfFiles = [
+        "디노다스 기사.pdf",   // 1회차 투자 전 확인
+        "주주게시판.pdf",     // 2회차 투자 전 확인
+        "!스페이스엠엘!.pdf",  // 3회차 투자 전 확인
+        "인스타.pdf",         // 4회차 투자 전 확인
+        "긴급 안내.pdf",       // 5회차 투자 전 확인
+        "블라인드.pdf",       // 6회차 투자 전 확인 (스와프 반영)
+        "리포트 일부 .pdf"     // 7회차 투자 전 확인
+    ];
+
+    // ■ 2회 투자런 확정 rData 객체 (이슈 텍스트 및 등락률 수치)
+    const rData = {
+        // ■ 디노다스 (ID: c4, Base: 0)
+        1: { desc: "디노다스 신상 컬렉션 출시 첫날 오픈런…매장 앞 수천 명 몰려", per: 10 },
+        2: { desc: "아이돌 '커피맛 쿠키' 착용 효과…디노다스, 글로벌 품절 대란", per: 15 },
+        3: { desc: "디노다스 '스노우브로' 티셔츠 표절 의혹…원작 브랜드와 법적 공방 예고", per: -10 },
+        4: { desc: "디노다스, 뒷광고·품질 논란 확산…소비자 신뢰 흔들", per: -8 },
+        5: { desc: "디노다스, 세계 패션위크 메인 무대 입성…글로벌 브랜드 도약 신호탄", per: 18 },
+        6: { desc: "패션업계 비수기 직격탄…디노다스, 재고 부담에 할인 판매 확대", per: -5 },
+        7: { desc: "'신상 너무 많다'…디노다스 과도한 신제품 전략에 소비자 피로감 커져", per: -10 },
+
+        // ■ 스페이스엠엘 (ID: c3, Base: 7)
+        8: { desc: "스페이스엠엘, 국방부 차세대 발사체 성능평가 탈락…군 사업 수주 '빨간불'", per: -7 },
+        9: { desc: "스페이스엠엘, 중동 대형 우주·방산 계약 체결…10조 원 규모 수출 성사", per: 18 },
+        10: { desc: "스페이스엠엘 핵심 기술 해외 유출 의혹…수사기관 조사 착수", per: -11 },
+        11: { desc: "스페이스엠엘, 민간 우주선 발사 성공…국내 우주산업 새 이정표", per: 14 },
+        12: { desc: "스페이스엠엘, 글로벌 우주정거장 프로젝트 합류…국제 우주개발 핵심 파트너로", per: 10 }, // 5회차 (스와프 반영)
+        13: { desc: "스페이스엠엘, 방산 비리 의혹에 세무조사까지…경영 리스크 확대", per: -15 },               // 6회차 (스와프 반영)
+        14: { desc: "스페이스엠엘, 세계 최초 유인 화성 착륙 성공…우주 탐사 역사 새로 썼다", per: 15 },
+
+        // ■ 감샐푸드 (ID: c2, Base: 14)
+        15: { desc: "감샐푸드, 글로벌 품절 사태에 생산라인 풀가동…공장 증설 투자 결정", per: 8 },
+        16: { desc: "'감샐빵 챌린지' 숏폼 열풍…감샐푸드, 역대급 매출 신기록", per: 16 },
+        17: { desc: "기후변화 직격탄…감샐푸드, 원자재 수급난에 생산 차질 우려", per: -8 },
+        18: { desc: "'억지 바이럴' 역풍 맞은 감샐푸드…트렌드 급랭에 판매량 감소", per: -10 },
+        19: { desc: "감샐푸드, 이물질 검출 루머 확산…선제적 전량 리콜로 소비자 불안 진화", per: -5 },
+        20: { desc: "감샐푸드, 미국 식품 규제 당국 조사서 혐의 벗어…대규모 손해배상 소송도 승소", per: 12 },
+        21: { desc: "감샐푸드 해외 생산기지 대규모 파업…납기 지연에 공급망 비상", per: -20 },
+
+        // ■ 요정바이오 (ID: c1, Base: 21)
+        22: { desc: "요정바이오, 임상 1상 데이터 유출 의혹 제기…보안 관리 도마 위", per: -8 },
+        23: { desc: "'식약처 압수수색' 찌라시 확산…요정바이오 \"사실무근\" 해명", per: -12 },
+        24: { desc: "요정바이오, 조사 결과 무혐의…신약 후보물질 임상 1상도 승인 획득", per: 12 },
+        25: { desc: "요정바이오, 글로벌 빅파마와 수조 원 규모 라이선스 아웃 계약 체결", per: 20 },
+        26: { desc: "요정바이오, 임상 2상서 원인 불명 이상반응 발생…안전성 우려 확산", per: -18 },
+        27: { desc: "\"부작용 아닌 일시적 유전자 활성화\"…요정바이오, 정밀 분석 결과 공개", per: 11 },
+        28: { desc: "요정바이오, 임상 3상 성공·전 세계 시판 허가 획득…차세대 블록버스터 신약 탄생", per: 18 }
+    };
+
+    // ■ 화면 초기 렌더링 및 정보 링크 설정
+    function updateUI() {
+        document.getElementById('round-title').innerText = `📈 주식 투자런 - ${currentRound}회차`;
+        
+        let investedSum = companies.reduce((sum, c) => sum + c.invested, 0);
+        let totalAsset = cash + investedSum;
+
+        document.getElementById('total-asset').innerText = Math.floor(totalAsset).toLocaleString();
+        document.getElementById('invested-asset').innerText = Math.floor(investedSum).toLocaleString();
+        document.getElementById('cash-asset').innerText = Math.floor(cash).toLocaleString();
+
+        // 힌트 파일 경로 연동 (Procreate 이미지 파일들이 같은 폴더에 있어야 함)
+        if (currentRound <= 7) {
+            document.getElementById('info-btn').style.display = "block";
+            document.getElementById('info-btn').href = encodeURIComponent(pdfFiles[currentRound - 1]);
+        } else {
+            document.getElementById('info-btn').style.display = "none";
+        }
+
+        // 기업 입력 폼 재생성
+        const container = document.getElementById('company-container');
+        container.innerHTML = '';
+
+        if (currentRound <= 7) {
+            companies.forEach(c => {
+                const div = document.createElement('div');
+                div.className = 'company-item';
+                div.innerHTML = `
+                    <div class="company-info">
+                        <span class="company-name">${c.name}</span>
+                        <div class="input-group">
+                            <input type="number" id="input-${c.id}" value="0" min="0" max="100" onchange="calculateRatios()">
+                            <span>%</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+            document.getElementById('next-btn').innerText = "투자 결과 보기";
+        } else {
+            // 엔딩 정산 화면
+            document.getElementById('round-title').innerText = `🏁 최종 투자 정산 종료`;
+            container.innerHTML = `<h2 style="text-align:center; color:#2b6cb0;">최종 자산: ${Math.floor(totalAsset).toLocaleString()} ₩</h2>`;
+            document.getElementById('next-btn').innerText = "게임 다시 시작하기";
+        }
+    }
+
+    // ■ 입력 비율에 맞춰 실시간 분산 투자금 계산
+    function calculateRatios() {
+        let totalAsset = cash + companies.reduce((sum, c) => sum + c.invested, 0);
+        let totalPercent = 0;
+
+        companies.forEach(c => {
+            let val = parseInt(document.getElementById(`input-${c.id}`).value) || 0;
+            totalPercent += val;
+        });
+
+        if (totalPercent > 100) {
+            alert("총 투자 비율은 100%를 초과할 수 없습니다!");
+            return false;
+        }
+
+        // 임시로 비율에 따른 예수금 분배 정산
+        companies.forEach(c => {
+            let pct = parseInt(document.getElementById(`input-${c.id}`).value) || 0;
+            c.invested = totalAsset * (pct / 100);
+        });
+        cash = totalAsset - companies.reduce((sum, c) => sum + c.invested, 0);
+
+        document.getElementById('invested-asset').innerText = Math.floor(companies.reduce((sum, c) => sum + c.invested, 0)).toLocaleString();
+        document.getElementById('cash-asset').innerText = Math.floor(cash).toLocaleString();
+        return true;
+    }
+
+    // ■ 결과 보기 및 라운드 정산 로직
+    function processRound() {
+        if (currentRound > 7) {
+            // 리셋 후 재시작
+            currentRound = 1;
+            cash = 1000000;
+            companies.forEach(c => c.invested = 0);
+            logs = [];
+            document.getElementById('log-container').innerHTML = "게임을 재시작합니다.";
+            updateUI();
+            return;
+        }
+
+        if (!calculateRatios()) return;
+
+        let roundLogs = [`<span style="color:#ecc94b;">=== [제 ${currentRound}회차 마감 뉴스] ===</span>`];
+        let totalAsset = cash;
+
+        companies.forEach(c => {
+            // 각 기업의 해당 회차 고유 rData 키 매핑 연산
+            let dataKey = c.base + currentRound;
+            let item = rData[dataKey];
+
+            if (c.invested > 0) {
+                let prevInvest = c.invested;
+                // 수익률 계산 반영
+                c.invested = c.invested * (1 + item.per / 100);
+                let profit = c.invested - prevInvest;
+                
+                let color = item.per > 0 ? '#fc8181' : '#63b3ed';
+                roundLogs.push(`[${c.name}] ${item.desc} (<b style="color:${color}">${item.per > 0 ? '+' : ''}${item.per}%</b>) ➡️ 손익: ${Math.floor(profit).toLocaleString()} ₩`);
+            } else {
+                roundLogs.push(`[${c.name}] ${item.desc} (${item.per > 0 ? '+' : ''}${item.per}%) ➡️ <span style="color:#718096;">(미투자)</span>`);
+            }
+            totalAsset += c.invested;
+        });
+
+        // 라운드 종료 후 모든 자산을 다시 가용 예수금(시드)으로 현금화 환전
+        cash = totalAsset;
+        companies.forEach(c => c.invested = 0);
+
+        // 로그 기록 출력
+        logs.unshift(roundLogs.join('<br>'));
+        document.getElementById('log-container').innerHTML = logs.join('<br><br>');
+
+        currentRound++;
+        updateUI();
+    }
+
+    // 초기 실행
+    updateUI();
+</script>
+
+</body>
+</html>
