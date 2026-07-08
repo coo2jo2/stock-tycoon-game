@@ -24,7 +24,8 @@
 <div class="container">
     <div class="header">
         <h2>회차: <span id="turn-text">1</span> / 7</h2>
-        <div>보유 점수: <input type="number" id="seed-input" value="1000000"> ₩</div>
+        <!-- ★ 보유 점수 초기 노출 값을 100000000 (1억)으로 수정 -->
+        <div>보유 점수: <input type="number" id="seed-input" value="100000000"> ₩</div>
     </div>
 
     <div id="grid" class="investment-grid"></div>
@@ -40,7 +41,8 @@
 <script>
     let turn = 1;
     let mode = "INPUT"; 
-    let seed = 1000000;
+    // ★ 초기 내부 계산용 seed 변수도 100000000 (1억)으로 수정
+    let seed = 100000000;
 
     // ★ 가람님 스펙: id에 1~4번 고정 로고 이미지 매핑
     const companies = [
